@@ -1,13 +1,37 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
+import { Link } from 'react-router-dom'
 
+import { PostAuthor } from './PostAuthor'
+import { ReactionButtons } from './ReactionButtons'
 
-import { selectAllPosts, fetchPosts } from './postsSlice'
-import { PostExcerpt } from './PostExcerpt'
+import { 
+    selectAllPosts, 
+    fetchPosts,
+    selectPostIds,
+    selectPostById
+} from './postsSlice'
+
+let PostExcerpt = ({ postId }) => {
+    const post = useSelector(state => selectPostById(state, postId))
+    return (
+        <article className="post-excerpt" key={postId}>
+            <h3>{post.title}</h3>
+            <PostAuthor userId={post.user} />
+            <p className="post-content">{post.content.substring(0, 100)}</p>
+            <ReactionButtons post={post} />
+            <Link to={`/posts/${postId}`} className="button muted-button">
+                View Post
+            </Link>
+        </article>
+    )
+}
+
+PostExcerpt = React.memo(PostExcerpt)
 
 export const PostsList = () => {
     const dispatch = useDispatch()
-    const posts = useSelector(selectAllPosts)
+    const orderedPostIds = useSelector(selectPostIds)
     const postStatus = useSelector(state => state.posts.status)
     const error = useSelector(state => state.posts.error)
 
@@ -20,12 +44,9 @@ export const PostsList = () => {
     let content
     if(postStatus === 'loading') {
         content = <div className="loader">Loading</div>
-    } else if(postStatus === 'succeeded') {
-        console.log(posts)
-        const orderedPosts = posts.slice().sort((a, b) => b.date.localeCompare(a.date))
-        
-        content = orderedPosts.map(post => (
-            <PostExcerpt key={post.id} post={post} />
+    } else if(postStatus === 'succeeded') {        
+        content = orderedPostIds.map(postId => (
+            <PostExcerpt key={postId} postId={postId} />
         ))    
     } else if (postStatus === 'failed') {
         content = <div>{error}</div>

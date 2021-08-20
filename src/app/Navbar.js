@@ -1,14 +1,20 @@
 import React from 'react'
-
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { fetchNotifications, selectAllNotifications } from '../features/notifications/notificationsSlice'
+import {
+  fetchNotifications,
+  selectAllNotifications,
+} from '../features/notifications/notificationsSlice'
 
 export const Navbar = () => {
   const dispatch = useDispatch()
   const notifications = useSelector(selectAllNotifications)
-  const numUnreadNotifications = notifications.filter(n => !n.read).length
+  const numUnreadNotifications = notifications.filter((n) => !n.read).length
+
+  const fetchNewNotifications = () => {
+    dispatch(fetchNotifications())
+  }
 
   let unreadNotificationsBadge
 
@@ -17,11 +23,6 @@ export const Navbar = () => {
       <span className="badge">{numUnreadNotifications}</span>
     )
   }
-
-  const fetchNewNotifications = () => {
-    dispatch(fetchNotifications())
-  }
-
 
   return (
     <nav>
@@ -36,6 +37,7 @@ export const Navbar = () => {
               Notifications {unreadNotificationsBadge}
             </Link>
           </div>
+
           <button className="button" onClick={fetchNewNotifications}>
             Refresh Notifications
           </button>
