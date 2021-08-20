@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { ReactionButtons } from './ReactionButtons'
 
-export const PostExcerpt = ({ key, post }) => {
+export let PostExcerpt = ({ post }) => {
     return (
         <article className="post-excerpt" key={post.id}>
             <h3>{post.title}</h3>
@@ -17,3 +17,5 @@ export const PostExcerpt = ({ key, post }) => {
         </article>
     )
 }
+
+PostExcerpt = React.memo(PostExcerpt)
